@@ -1,0 +1,18 @@
+group 'com.justsayozz.shop'
+version '1.0'
+
+apply plugin: 'java'
+task runApp(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "Application"
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
