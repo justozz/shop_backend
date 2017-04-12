@@ -196,6 +196,8 @@ public class DatabaseManager {
                         Category category = new Category();
                         category.id = resultSet.getInt("id");
                         category.title = resultSet.getString("title");
+                        category.iconUrl = String.format(Locale.ENGLISH, "http://localhost:666/images/%s",
+                                resultSet.getString("icon"));
                         categories.add(category);
                     }
                     resultSet.close();

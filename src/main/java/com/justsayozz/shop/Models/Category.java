@@ -6,4 +6,5 @@ package com.justsayozz.shop.Models;
 public class Category {
     public int id;
     public String title;
+    public String iconUrl;
 }
