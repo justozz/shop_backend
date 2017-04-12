@@ -1,9 +1,12 @@
 package com.justsayozz.shop.Logics;
 
+import com.justsayozz.shop.Models.Category;
 import com.justsayozz.shop.Models.DatabaseResult;
 import com.justsayozz.shop.Models.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -139,5 +142,77 @@ public class DatabaseManager {
         }
 
         return result;
+    }
+
+    public DatabaseResult<Boolean> signIn(String login, String password) {
+        DatabaseResult<Boolean> result = new DatabaseResult<>(false, "Error occurred. Please try again");
+        Connection connection = getConnection();
+
+        if (connection != null) {
+            String sql = String.format(Locale.ENGLISH, "SELECT * FROM users WHERE login='%s';", login);
+            ResultSet resultSet = executeQueryStatement(connection, sql);
+            try {
+                if (resultSet != null) {
+                    if (resultSet.next()) {
+                        String storedPassword = resultSet.getString("password");
+                        if (password.equals(storedPassword)) {
+                            result.data = true;
+                            result.message = "Authenticated";
+                        } else {
+                            result.message = "Invalid password";
+                        }
+                    } else {
+                        result.message = "User not found";
+                    }
+                    resultSet.close();
+                    resultSet.getStatement().close();
+                }
+            } catch (SQLException ex) {
+                System.out.print(ex.getMessage());
+            }
+
+            //Close connection
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                System.out.print(ex.getMessage());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Category> getCategories() {
+        List<Category> categories = null;
+        Connection connection = getConnection();
+
+        if (connection != null) {
+            String sql = "SELECT * FROM categories;";
+            ResultSet resultSet = executeQueryStatement(connection, sql);
+            try {
+                if (resultSet != null) {
+                    categories = new ArrayList<>();
+                    while (resultSet.next()) {
+                        Category category = new Category();
+                        category.id = resultSet.getInt("id");
+                        category.title = resultSet.getString("title");
+                        categories.add(category);
+                    }
+                    resultSet.close();
+                    resultSet.getStatement().close();
+                }
+            } catch (SQLException ex) {
+                System.out.print(ex.getMessage());
+            }
+
+            //Close connection
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                System.out.print(ex.getMessage());
+            }
+        }
+
+        return categories;
     }
 }
